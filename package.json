@@ -1,0 +1,58 @@
+{
+  "name": "peoplesuite-apis",
+  "version": "1.0.0",
+  "description": "CPSC 5910 24SQ Cloud Computing Lab 7",
+  "main": "index.ts",
+  "scripts": {
+    "test": "mocha --exit",
+    "start": "yarn tsx watch index.ts",
+    "build": "tsc",
+    "prepare": "husky install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.5",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "mongodb": "^6.3.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "uuid": "^9.0.1"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/chai": "^4.3.11",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/express-session": "^1.17.10",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.9.0",
+    "@types/node-cron": "^3.0.11",
+    "@types/passport": "^1.0.16",
+    "@types/passport-google-oauth20": "^2.0.14",
+    "@types/sinon": "^17.0.3",
+    "@types/sinon-chai": "^3.2.12",
+    "@types/supertest": "^6.0.2",
+    "@types/uuid": "^9.0.7",
+    "chai": "^4.4.1",
+    "chai-http": "^4.4.0",
+    "husky": "^8.0.3",
+    "mocha": "^10.2.0",
+    "mongodb-memory-server": "^9.1.6",
+    "mongoose": "^8.0.3",
+    "sinon": "^17.0.1",
+    "sinon-chai": "^3.7.0",
+    "supertest": "^6.3.3",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
