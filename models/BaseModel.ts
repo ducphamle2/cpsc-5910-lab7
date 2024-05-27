@@ -4,11 +4,11 @@ import { Schema } from "dynamoose/dist/Schema";
 
 abstract class BaseModel {
   protected schema: Schema;
-  public model: Model;
+  protected model: Model;
 
   public constructor(protected collectionName: string) {}
 
-  public createModel = () => {
+  protected createModel = () => {
     if (!this.model) {
       this.model = model(this.collectionName, this.schema);
     }

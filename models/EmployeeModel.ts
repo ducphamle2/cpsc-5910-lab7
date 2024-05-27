@@ -12,7 +12,6 @@ import { config } from "../config";
 import BaseModel from "./BaseModel";
 
 export default class EmployeeModel extends BaseModel {
-  private static instance: EmployeeModel;
   public readonly bucketName = "cpsc5910-lab7-employee-photos";
   // Create S3 client
   private readonly s3Client = new S3Client({
@@ -29,7 +28,7 @@ export default class EmployeeModel extends BaseModel {
     this.createModel();
   }
 
-  public createSchema = (): void => {
+  private createSchema = (): void => {
     this.schema = new Schema(
       {
         employeeID: Number,
@@ -45,13 +44,6 @@ export default class EmployeeModel extends BaseModel {
       { saveUnknown: ["managerID", "managerName"], timestamps: true }
     );
   };
-
-  public static getInstance(): EmployeeModel {
-    if (!EmployeeModel.instance) {
-      EmployeeModel.instance = new EmployeeModel();
-    }
-    return EmployeeModel.instance;
-  }
 
   public async createTable() {
     await this.model.table().initialize();

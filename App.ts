@@ -4,12 +4,15 @@ import express from "express";
 import session from "express-session";
 import passport from "passport";
 import GooglePassport from "./GooglePassport";
+import DepartmentModel from "./models/DepartmentModel";
 import EmployeeModel from "./models/EmployeeModel";
+import departmentRouterHandler from "./routes/departments";
 import userRouterHandler from "./routes/employees";
 import { Middleware } from "./services/middleware";
 
 export interface Models {
   employeeModel?: EmployeeModel;
+  departmentModel?: DepartmentModel;
 }
 
 class App {
@@ -48,7 +51,8 @@ class App {
   public routes(): void {
     const router = express.Router();
     // setup all custom routers
-    const employeeModel = userRouterHandler(this.models.employeeModel);
+    const employeeModelHandler = userRouterHandler(this.models.employeeModel);
+    const departmentModelHandler = departmentRouterHandler(this.models.departmentModel);
 
     router.use((req, res, next) => {
       res.header("Access-Control-Allow-Origin", "*");
@@ -83,7 +87,13 @@ class App {
     this.express.use(
       "/peoplesuite/apis/employees",
       this.middlewareInstance ? this.middlewareInstance.validateAuth : (req, res, next) => next(),
-      employeeModel
+      employeeModelHandler
+    );
+
+    this.express.use(
+      "/peoplesuite/apis/departments",
+      this.middlewareInstance ? this.middlewareInstance.validateAuth : (req, res, next) => next(),
+      departmentModelHandler
     );
 
     this.express.use("/", router);
