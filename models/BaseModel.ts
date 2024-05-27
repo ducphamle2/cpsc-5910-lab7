@@ -1,12 +1,18 @@
-import { Connection, Schema } from "mongoose";
+import { model } from "dynamoose";
+import { Model } from "dynamoose/dist/Model";
+import { Schema } from "dynamoose/dist/Schema";
 
 abstract class BaseModel {
   protected schema: Schema;
-  protected connection: Connection;
+  public model: Model;
 
-  public constructor(connection: Connection, protected collectionName: string) {
-    this.connection = connection;
-  }
+  public constructor(protected collectionName: string) {}
+
+  public createModel = () => {
+    if (!this.model) {
+      this.model = model(this.collectionName, this.schema);
+    }
+  };
 }
 
 export default BaseModel;

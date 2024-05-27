@@ -1,4 +1,3 @@
-import { DataAccess } from "./DataAccess";
 import { config } from "./config";
 import EmpployeeModel from "./models/EmployeeModel";
 import { initServer } from "./server";
@@ -8,14 +7,14 @@ const port = config.PORT as number;
 const host = "0.0.0.0";
 
 (async () => {
-  DataAccess.connect();
-  const connection = DataAccess.mongooseConnection;
-  const employeeModel = new EmpployeeModel(connection);
-  const middleware =
-    config.NODE_ENV === "development" ? undefined : new Middleware();
+  const employeeModel = new EmpployeeModel();
+  try {
+    await employeeModel.createTable();
+  } catch (error) {}
+  const middleware = config.NODE_ENV === "development" ? undefined : new Middleware();
   const server = initServer(
     {
-      employeeModel,
+      employeeModel
     },
     middleware
   );

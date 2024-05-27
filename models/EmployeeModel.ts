@@ -1,14 +1,11 @@
-import Mongoose, { Schema } from "mongoose";
-import { v4 as uuidv4 } from "uuid";
-import IEmployeeModel from "../interfaces/IEmployeeModel";
+import { Schema } from "dynamoose/dist/Schema";
 import BaseModel from "./BaseModel";
 
 export default class EmployeeModel extends BaseModel {
-  public model: any;
   private static instance: EmployeeModel;
 
-  public constructor(connection: Mongoose.Connection) {
-    super(connection, "employees");
+  public constructor() {
+    super("employees");
     this.createSchema();
     this.createModel();
   }
@@ -16,85 +13,33 @@ export default class EmployeeModel extends BaseModel {
   public createSchema = (): void => {
     this.schema = new Schema(
       {
-        authID: String,
-        userID: String,
+        employeeID: String,
         firstName: String,
         lastName: String,
-        email: String,
-        phoneNumber: String,
-        profilePic: String,
+        startDate: Number,
+        country: Number,
+        departmentID: String,
+        title: String,
+        managerID: String,
+        managerName: String
       },
-      {
-        collection: this.collectionName,
-      }
+      { saveUnknown: ["managerID", "managerName"], timestamps: true }
     );
   };
 
-  public createModel = () => {
-    if (!this.connection.models[this.collectionName]) {
-      this.model = this.connection.model<IEmployeeModel>(
-        this.collectionName,
-        this.schema
-      );
-    } else {
-      this.model = this.connection.models[this.collectionName];
-    }
-  };
-
-  public static getInstance(connection: Mongoose.Connection): EmployeeModel {
+  public static getInstance(): EmployeeModel {
     if (!EmployeeModel.instance) {
-      EmployeeModel.instance = new EmployeeModel(connection);
+      EmployeeModel.instance = new EmployeeModel();
     }
     return EmployeeModel.instance;
   }
 
-  public async addEmployee(
-    authID: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    phoneNumber: string,
-    profilePic: string
-  ) {
-    const userID = uuidv4();
-
-    const newEmployee = new this.model({
-      authID: authID,
-      userID: userID,
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      phoneNumber: phoneNumber,
-      profilePic: profilePic,
-    });
-
-    await newEmployee.save();
-    return userID;
-  }
-
-  public async updateEmployee(
-    userID: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    phoneNumber: string,
-    profilePic: string
-  ) {
-    return this.model.findOneAndUpdate(
-      { userID, firstName, lastName, email, phoneNumber, profilePic },
-      { new: true }
-    );
-  }
-
-  public async getEmployeeByID(userID: string) {
-    return this.model.findOne({ userID: userID });
-  }
-
-  public async getEmployeeByAuth(authID: string) {
-    return this.model.findOne({ authID: authID });
+  public async createTable() {
+    await this.model.table().initialize();
   }
 
   public async getEmployees() {
-    return this.model.find();
+    const scanResult = await this.model.scan().all().exec();
+    return scanResult.map((result) => result.toJSON());
   }
 }

@@ -4,21 +4,21 @@ import EmployeeModel from "../models/EmployeeModel";
 const userRouterHandler = (Users: EmployeeModel) => {
   const router = Router();
 
-  //Get one user by ID
-  router.get("/:id", async (req, res, next) => {
-    try {
-      const id = req.session["uuid"] ? req.session["uuid"] : req.params.id;
-      const user = await Users.getEmployeeByID(id);
-      if (user) {
-        res.json(user);
-      } else {
-        res.status(404).json({ error: "User not found" });
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-  });
+  // //Get one user by ID
+  // router.get("/:id", async (req, res, next) => {
+  //   try {
+  //     const id = req.session["uuid"] ? req.session["uuid"] : req.params.id;
+  //     const user = await Users.getEmployeeByID(id);
+  //     if (user) {
+  //       res.json(user);
+  //     } else {
+  //       res.status(404).json({ error: "User not found" });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching user data:", error);
+  //     res.status(500).json({ error: "Internal server error" });
+  //   }
+  // });
 
   //Get all users
   router.get("/", async (req, res, next) => {
@@ -35,27 +35,20 @@ const userRouterHandler = (Users: EmployeeModel) => {
     }
   });
 
-  //Update user information by ID
-  router.put("/:id", async (req, res, next) => {
-    try {
-      const id = req.session["uuid"] ? req.session["uuid"] : req.params.id;
-      const { firstName, lastName, email, phoneNumber, profilePic } = req.body;
+  // //Update user information by ID
+  // router.put("/:id", async (req, res, next) => {
+  //   try {
+  //     const id = req.session["uuid"] ? req.session["uuid"] : req.params.id;
+  //     const { firstName, lastName, email, phoneNumber, profilePic } = req.body;
 
-      const updatedUser = await Users.updateEmployee(
-        id,
-        firstName,
-        lastName,
-        email,
-        phoneNumber,
-        profilePic
-      );
+  //     const updatedUser = await Users.updateEmployee(id, firstName, lastName, email, phoneNumber, profilePic);
 
-      res.status(200).json(updatedUser);
-    } catch (error) {
-      console.error("Error updating user:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-  });
+  //     res.status(200).json(updatedUser);
+  //   } catch (error) {
+  //     console.error("Error updating user:", error);
+  //     res.status(500).json({ error: "Internal server error" });
+  //   }
+  // });
   return router;
 };
 

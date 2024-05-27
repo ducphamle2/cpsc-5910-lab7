@@ -1,32 +1,16 @@
-import Mongoose from "mongoose";
+import dynamoose from "dynamoose";
 import { config } from "./config";
 
-class DataAccess {
-  static mongooseInstance: any;
-  static mongooseConnection: Mongoose.Connection;
-  static DB_CONNECTION_STRING: string = config.DB_CONNECTION_STRING;
+// Create new DynamoDB instance
+const ddb = new dynamoose.aws.ddb.DynamoDB({
+  credentials: {
+    accessKeyId: config.AWS_ACCESS_KEY_ID,
+    secretAccessKey: config.AWS_SECRET_ACCESS_KEY
+  },
+  region: config.AWS_REGION
+});
 
-  constructor(dbConnectionString?: string) {
-    DataAccess.connect(dbConnectionString);
-  }
+// Set DynamoDB instance to the Dynamoose DDB instance
+dynamoose.aws.ddb.set(ddb);
 
-  static connect(dbConnectionString?: string): Mongoose.Connection {
-    if (this.mongooseInstance) return this.mongooseInstance;
-    return this.create(dbConnectionString);
-  }
-
-  static create(dbConnectionString?: string): Mongoose.Connection {
-    this.mongooseConnection = Mongoose.connection;
-    this.mongooseConnection.on("open", () => {
-      console.log("Connected to mongodb.");
-    });
-
-    this.mongooseInstance = Mongoose.connect(dbConnectionString ?? this.DB_CONNECTION_STRING);
-    return this.mongooseConnection;
-  }
-
-  static disconnect() {
-    return Mongoose.disconnect();
-  }
-}
-export { DataAccess };
+export default ddb;

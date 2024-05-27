@@ -38,7 +38,7 @@ class App {
       session({
         secret: "toxic flamingo",
         saveUninitialized: true,
-        resave: true,
+        resave: true
       })
     );
     this.express.use(passport.initialize());
@@ -52,10 +52,7 @@ class App {
 
     router.use((req, res, next) => {
       res.header("Access-Control-Allow-Origin", "*");
-      res.header(
-        "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept"
-      );
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
       res.header("Access-Control-Allow-Methods", "*");
       next();
     });
@@ -67,45 +64,10 @@ class App {
     router.get(
       "/login/federated/google",
       passport.authenticate("google", {
-        scope: ["profile", "email"],
+        scope: ["profile", "email"]
       }),
       (req, res) => {
         res.send("Successful login");
-      }
-    );
-
-    router.get(
-      "/login/federated/google/callback",
-      (req, res, next) => {
-        req.session.save();
-        next();
-      },
-      passport.authenticate("google", {
-        failureRedirect: "/error",
-      }),
-      async (req, res) => {
-        const googleProfile: any = JSON.parse(JSON.stringify(req.user));
-        let doesUserExist: any =
-          await this.models.employeeModel.getEmployeeByAuth(googleProfile.id);
-
-        if (!doesUserExist) {
-          let newUser: any = await this.models.employeeModel.addEmployee(
-            googleProfile.id,
-            googleProfile.name.givenName,
-            googleProfile.name.familyName,
-            googleProfile.emails[0].value,
-            "123456789",
-            googleProfile.photos[0].value
-          );
-          req.session["uuid"] = newUser;
-        } else {
-          req.session["uuid"] = doesUserExist.userID;
-        }
-        req.session.save();
-
-        // TODO: Have to change this to a relative link, otherwise the session information is lost
-        // Solution is to inject frontend build files into the backend and serve them
-        res.redirect("/dashboard");
       }
     );
 
@@ -120,9 +82,7 @@ class App {
 
     this.express.use(
       "/peoplesuite/apis/employees",
-      this.middlewareInstance
-        ? this.middlewareInstance.validateAuth
-        : (req, res, next) => next(),
+      this.middlewareInstance ? this.middlewareInstance.validateAuth : (req, res, next) => next(),
       employeeModel
     );
 
