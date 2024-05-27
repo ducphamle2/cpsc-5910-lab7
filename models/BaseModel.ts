@@ -10,7 +10,7 @@ abstract class BaseModel {
 
   protected createModel = () => {
     if (!this.model) {
-      this.model = model(this.collectionName, this.schema);
+      this.model = model(this.collectionName, this.schema, { initialize: true });
     }
   };
 }

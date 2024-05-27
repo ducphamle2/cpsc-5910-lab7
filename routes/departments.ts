@@ -48,11 +48,13 @@ const departmentRouterHandler = (Departments: DepartmentModel) => {
   router.get("/:id/employees", async (req, res, next) => {
     const { id } = req.params;
     try {
-      const employees = await Departments.getDepartmentEmployees(+id);
+      // fetch api from employees.
+      // const employees = await
+      const employees = [];
       if (employees.length > 0) {
         res.status(200).json(employees);
       } else {
-        res.status(404).json({ error: "Users not found" });
+        res.status(404).json({ error: `Employees given the department ${id} not found` });
       }
     } catch (error) {
       console.error("Error fetching user data:", error);

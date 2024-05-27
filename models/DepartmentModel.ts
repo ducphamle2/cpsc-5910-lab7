@@ -19,20 +19,12 @@ export default class DepartmentModel extends BaseModel {
     );
   };
 
-  public async createTable() {
-    await this.model.table().initialize();
-  }
-
   public async getDepartments() {
     const scanResult = await this.model.scan().all().exec();
     return scanResult.map((result) => result.toJSON());
   }
 
   public async getDepartmentById(id: string) {
-    return (await this.model.query("departmentID").eq(id).exec()).map((data) => data.toJSON());
-  }
-
-  public async getDepartmentEmployees(id: number) {
     return (await this.model.query("departmentID").eq(id).exec()).map((data) => data.toJSON());
   }
 
