@@ -13,7 +13,7 @@ export default class EmployeeModel extends BaseModel {
   public createSchema = (): void => {
     this.schema = new Schema(
       {
-        employeeID: String,
+        employeeID: Number,
         firstName: String,
         lastName: String,
         startDate: Number,
@@ -41,5 +41,24 @@ export default class EmployeeModel extends BaseModel {
   public async getEmployees() {
     const scanResult = await this.model.scan().all().exec();
     return scanResult.map((result) => result.toJSON());
+  }
+
+  public async getEmployeeById(id: number) {
+    return (await this.model.query("employeeID").eq(id).exec()).map((data) => data.toJSON());
+  }
+
+  public async createNewEmployee(data: {
+    employeeID: number;
+    firstName: string;
+    lastName: string;
+    startDate: number;
+    country: number;
+    departmentID: string;
+    title: string;
+    managerID?: string;
+    managerName?: string;
+  }) {
+    const result = await this.model.create(data);
+    return result.toJSON();
   }
 }
