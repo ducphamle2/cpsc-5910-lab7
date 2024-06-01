@@ -29,16 +29,19 @@ export default class EmployeeModel extends BaseModel {
   }
 
   private createSchema = (): void => {
-    this.schema = new Schema({
-      employeeID: {
-        type: Number,
-        hashKey: true
+    this.schema = new Schema(
+      {
+        employeeID: {
+          type: Number,
+          hashKey: true
+        },
+        firstName: String,
+        lastName: String,
+        startDate: Number,
+        country: Number
       },
-      firstName: String,
-      lastName: String,
-      startDate: Number,
-      country: Number
-    });
+      { timestamps: true }
+    );
   };
 
   public async getEmployees() {

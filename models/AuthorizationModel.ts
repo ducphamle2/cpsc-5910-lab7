@@ -10,24 +10,27 @@ export default class AuthorizationModel extends BaseModel {
   }
 
   private createSchema = (): void => {
-    this.schema = new Schema({
-      clientId: {
-        type: String,
-        hashKey: true
-      },
-      clientSecret: String,
-      contactEmail: {
-        type: String,
-        index: {
-          name: "contactEmailIndex",
-          type: "local"
+    this.schema = new Schema(
+      {
+        clientId: {
+          type: String,
+          hashKey: true
+        },
+        clientSecret: String,
+        contactEmail: {
+          type: String,
+          index: {
+            name: "contactEmailIndex",
+            type: "local"
+          }
+        },
+        accessToken: {
+          type: String,
+          rangeKey: true
         }
       },
-      accessToken: {
-        type: String,
-        rangeKey: true
-      }
-    });
+      { saveUnknown: ["accessToken"], timestamps: true }
+    );
   };
 
   public async validateAccessToken(accessToken: string) {
@@ -46,5 +49,10 @@ export default class AuthorizationModel extends BaseModel {
 
   public async getContactEmail(contactEmail: string) {
     return (await this.model.query("contractEmail").eq(contactEmail).exec()).map((data) => data.toJSON());
+  }
+
+  public async storeNewApplication(data: { clientId: string; clientSecret: string; contactEmail: String }) {
+    const result = await this.model.create(data);
+    return result.toJSON();
   }
 }
