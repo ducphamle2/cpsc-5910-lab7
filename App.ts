@@ -2,17 +2,16 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import express from "express";
 import session from "express-session";
-import passport from "passport";
 import GooglePassport from "./GooglePassport";
-import DepartmentModel from "./models/DepartmentModel";
+import AuthorizationModel from "./models/AuthorizationModel";
 import EmployeeModel from "./models/EmployeeModel";
-import departmentRouterHandler from "./routes/departments";
+import authorizationRouterHandler from "./routes/authorization";
 import userRouterHandler from "./routes/employees";
 import { Middleware } from "./services/middleware";
 
 export interface Models {
   employeeModel?: EmployeeModel;
-  departmentModel?: DepartmentModel;
+  authorizationModel?: AuthorizationModel;
 }
 
 class App {
@@ -25,7 +24,6 @@ class App {
   constructor(private models: Models) {
     this.express = express();
     this.middleware();
-    this.googlePassport = new GooglePassport();
   }
 
   withMiddleware(middleware: Middleware) {
@@ -44,15 +42,13 @@ class App {
         resave: true
       })
     );
-    this.express.use(passport.initialize());
-    this.express.use(passport.session());
   }
 
   public routes(): void {
     const router = express.Router();
     // setup all custom routers
     const employeeModelHandler = userRouterHandler(this.models.employeeModel);
-    const departmentModelHandler = departmentRouterHandler(this.models.departmentModel);
+    const authorizationModelHandler = authorizationRouterHandler(this.models.authorizationModel);
 
     router.use((req, res, next) => {
       res.header("Access-Control-Allow-Origin", "*");
@@ -62,26 +58,7 @@ class App {
     });
 
     router.get("/", (req, res, next) => {
-      res.send("Express + TypeScript Server");
-    });
-
-    router.get(
-      "/login/federated/google",
-      passport.authenticate("google", {
-        scope: ["profile", "email"]
-      }),
-      (req, res) => {
-        res.send("Successful login");
-      }
-    );
-
-    router.get("/logout", (req, res) => {
-      req.session.destroy((err) => {
-        if (err) {
-          return res.status(500).send("Internal Server Error");
-        }
-        res.redirect("/error");
-      });
+      res.send("Welcome!");
     });
 
     this.express.use(
@@ -91,9 +68,9 @@ class App {
     );
 
     this.express.use(
-      "/peoplesuite/apis/departments",
+      "/peoplesuite/apis/token",
       this.middlewareInstance ? this.middlewareInstance.validateAuth : (req, res, next) => next(),
-      departmentModelHandler
+      authorizationModelHandler
     );
 
     this.express.use("/", router);

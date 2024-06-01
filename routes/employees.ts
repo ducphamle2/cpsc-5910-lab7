@@ -82,7 +82,7 @@ const employeeRouterHandler = (Users: EmployeeModel) => {
       if (+id < 1000000 || +id > 9999999) {
         return res.status(400).json({ error: "Employee ID too small or too large" });
       }
-      const { firstName, lastName, startDate, country, departmentID, title, managerID, managerName } = req.body;
+      const { firstName, lastName, startDate, country } = req.body;
 
       const employee = await Users.getEmployeeById(+id);
       if (employee.length > 0) {
@@ -94,11 +94,7 @@ const employeeRouterHandler = (Users: EmployeeModel) => {
         firstName,
         lastName,
         startDate,
-        country,
-        departmentID,
-        title,
-        managerID,
-        managerName
+        country
       });
 
       res.status(200).json(newEmployee);

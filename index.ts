@@ -1,5 +1,5 @@
 import { config } from "./config";
-import DepartmentModel from "./models/DepartmentModel";
+import AuthorizationModel from "./models/AuthorizationModel";
 import EmpployeeModel from "./models/EmployeeModel";
 import { initServer } from "./server";
 import { Middleware } from "./services/middleware";
@@ -9,12 +9,12 @@ const host = "0.0.0.0";
 
 (async () => {
   const employeeModel = new EmpployeeModel();
-  const departmentModel = new DepartmentModel();
+  const authorizationModel = new AuthorizationModel();
   const middleware = config.NODE_ENV === "development" ? undefined : new Middleware();
   const server = initServer(
     {
       employeeModel,
-      departmentModel
+      authorizationModel
     },
     middleware
   );

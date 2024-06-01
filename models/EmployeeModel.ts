@@ -29,29 +29,16 @@ export default class EmployeeModel extends BaseModel {
   }
 
   private createSchema = (): void => {
-    this.schema = new Schema(
-      {
-        employeeID: {
-          type: Number,
-          hashKey: true
-        },
-        firstName: String,
-        lastName: String,
-        startDate: Number,
-        country: Number,
-        departmentID: {
-          type: String,
-          index: {
-            name: "DepartmentIdIndex",
-            type: "global"
-          }
-        },
-        title: String,
-        managerID: String,
-        managerName: String
+    this.schema = new Schema({
+      employeeID: {
+        type: Number,
+        hashKey: true
       },
-      { saveUnknown: ["managerID", "managerName"], timestamps: true }
-    );
+      firstName: String,
+      lastName: String,
+      startDate: Number,
+      country: Number
+    });
   };
 
   public async getEmployees() {
@@ -69,10 +56,6 @@ export default class EmployeeModel extends BaseModel {
     lastName: string;
     startDate: number;
     country: number;
-    departmentID: string;
-    title: string;
-    managerID?: string;
-    managerName?: string;
   }) {
     const result = await this.model.create(data);
     return result.toJSON();
@@ -101,8 +84,6 @@ export default class EmployeeModel extends BaseModel {
       return error;
     }
   };
-
-  // TODO: add query employees by department id
 
   // Function to get a file from S3
   downloadEmployeeImage = async (employeeID: string, photoName: string): Promise<stream.Readable> => {
