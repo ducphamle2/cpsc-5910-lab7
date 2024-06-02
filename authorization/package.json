@@ -1,0 +1,51 @@
+{
+  "name": "peoplesuite-apis",
+  "version": "1.0.0",
+  "description": "CPSC 5910 24SQ Cloud Computing Lab 7",
+  "main": "index.ts",
+  "scripts": {
+    "test": "jest",
+    "start": "yarn tsx watch index.ts",
+    "build": "tsc",
+    "prepare": "husky install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.583.0",
+    "axios": "^1.6.5",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "dynamoose": "^4.0.1",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^9.0.1"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@swc/core": "^1.5.7",
+    "@swc/jest": "^0.2.36",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/express-session": "^1.17.10",
+    "@types/jest": "^29.5.12",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/multer": "^1.4.11",
+    "@types/node": "^20.9.0",
+    "@types/supertest": "^6.0.2",
+    "@types/uuid": "^9.0.7",
+    "husky": "^8.0.3",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

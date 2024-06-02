@@ -3,30 +3,18 @@ import cors from "cors";
 import express from "express";
 import session from "express-session";
 import AuthorizationModel from "./models/AuthorizationModel";
-import EmployeeModel from "./models/EmployeeModel";
 import authorizationRouterHandler from "./routes/authorization";
-import userRouterHandler from "./routes/employees";
-import { Middleware } from "./services/middleware";
 
 export interface Models {
-  employeeModel?: EmployeeModel;
   authorizationModel?: AuthorizationModel;
 }
 
 class App {
   public express: express.Application;
 
-  // depdendency injection for middleware & mongo models for easy testing
-  private middlewareInstance: Middleware;
-
   constructor(private models: Models) {
     this.express = express();
     this.middleware();
-  }
-
-  withMiddleware(middleware: Middleware) {
-    this.middlewareInstance = middleware;
-    return this;
   }
 
   private middleware(): void {
@@ -56,19 +44,8 @@ class App {
       res.send("Welcome!");
     });
 
-    if (this.models.employeeModel) {
-      const employeeModelHandler = userRouterHandler(this.models.employeeModel);
-      this.express.use(
-        "/peoplesuite/apis/employees",
-        this.middlewareInstance ? this.middlewareInstance.validateAuth : (req, res, next) => next(),
-        employeeModelHandler
-      );
-    }
-
-    if (this.models.authorizationModel) {
-      const authorizationModelHandler = authorizationRouterHandler(this.models.authorizationModel);
-      this.express.use("/peoplesuite/apis/token", (req, res, next) => next(), authorizationModelHandler);
-    }
+    const authorizationModelHandler = authorizationRouterHandler(this.models.authorizationModel);
+    this.express.use("/peoplesuite/apis/token", (req, res, next) => next(), authorizationModelHandler);
 
     this.express.use("/", router);
   }

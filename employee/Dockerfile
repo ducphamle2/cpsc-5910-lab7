@@ -17,4 +17,4 @@ RUN yarn install --frozen-lockfile
 EXPOSE 5000
 
 # Run the application.
-CMD yarn start:employee
+CMD yarn start

@@ -1,5 +1,0 @@
-services:
-  server:
-    image: "ducphamle212/employee:latest"
-    env_file:
-      - .env

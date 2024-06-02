@@ -4,8 +4,7 @@
   "description": "CPSC 5910 24SQ Cloud Computing Lab 7",
   "scripts": {
     "test": "jest",
-    "start:employee": "yarn tsx watch employeesService.ts",
-    "start:authorization": "PORT=5001 yarn tsx watch authorizationService.ts",
+    "start": "yarn tsx watch index.ts",
     "build": "tsc",
     "prepare": "husky install"
   },

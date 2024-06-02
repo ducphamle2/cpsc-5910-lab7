@@ -17,4 +17,4 @@ RUN yarn install --frozen-lockfile
 EXPOSE 5001
 
 # Run the application.
-CMD yarn start:authorization
+CMD yarn start
