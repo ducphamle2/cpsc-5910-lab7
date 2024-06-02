@@ -1,6 +1,5 @@
 services:
   server:
-    build:
-      context: .
+    image: "ducphamle212/employee:latest"
     env_file:
       - .env

@@ -131,3 +131,4 @@ dist
 
 db_root_password.txt
 db_root_username.txt
+secret.yaml

@@ -2,6 +2,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
+import { config } from "../config";
 
 export class Middleware {
   async validateAuth(
@@ -15,12 +16,15 @@ export class Middleware {
     if (tokenType !== "Bearer") return res.status(400).json({ message: "Not bearer token" });
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    // TODO: call to the authorization service
-    const validationResult = await fetch("http://localhost:5000/peoplesuite/apis/token/validation", {
-      method: "POST",
-      body: JSON.stringify({ accessToken }),
-      headers: myHeaders
-    }).then((data) => data.json());
+    const endpoint = `${config.AUTHORIZATION_SERVICE_URL}/peoplesuite/apis/token/validation`;
+    const validationResult = await fetch(
+      endpoint,
+      {
+        method: "POST",
+        body: JSON.stringify({ accessToken }),
+        headers: myHeaders
+      }
+    ).then((data) => data.json());
     if (validationResult.success) {
       next();
       return;

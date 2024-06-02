@@ -8,7 +8,7 @@ export default class AuthorizationModel extends BaseModel {
     this.createSchema();
     this.createModel();
   }
-  public readonly expiresIn = "10s";
+  public readonly expiresIn = "5m";
   public readonly tokenType = "Bearer";
 
   private createSchema = (): void => {

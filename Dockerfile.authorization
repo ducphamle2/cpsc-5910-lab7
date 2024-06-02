@@ -14,7 +14,7 @@ COPY . .
 RUN yarn install --frozen-lockfile
 
 # Expose the port that the application listens on.
-EXPOSE 5000
+EXPOSE 5001
 
 # Run the application.
-CMD yarn start
+CMD yarn start:authorization
