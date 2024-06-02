@@ -69,7 +69,7 @@ class App {
 
     this.express.use(
       "/peoplesuite/apis/token",
-      this.middlewareInstance ? this.middlewareInstance.validateAuth : (req, res, next) => next(),
+      (req, res, next) => next(),
       authorizationModelHandler
     );
 

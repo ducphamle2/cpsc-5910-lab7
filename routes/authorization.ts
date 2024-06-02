@@ -1,7 +1,6 @@
 import { createHash } from "crypto";
 import { Router } from "express";
-import jwt from "jsonwebtoken";
-import { v5 as uuidv5 } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import AuthorizationModel from "../models/AuthorizationModel";
 
 const authorizationModelHandler = (Authorization: AuthorizationModel) => {
@@ -9,15 +8,20 @@ const authorizationModelHandler = (Authorization: AuthorizationModel) => {
 
   router.post("/", async (req, res, next) => {
     try {
-      const { clientId, clientSecret } = req.body;
-      const app = await Authorization.getAuthorizationData(clientId, clientSecret);
-      if (app.length > 0) {
-        const expiresIn = "10h";
-        const accessToken = jwt.sign(clientId, clientSecret, { expiresIn });
-        res.status(200).json({ access_token: accessToken, token_type: "Bearer", expire_in: expiresIn });
-        return;
+      const { client_id: clientId, client_secret: clientSecret, grant_type: grantType } = req.body;
+      if (grantType !== "client_credentials") {
+        res.status(400).json({ error: "Grant type is incorrect" });
       }
-      res.status(404).json({ error: "Client id and client secret do not match. Cannot grant authorization!" });
+      try {
+        const result = await Authorization.renewAccessToken(clientId, clientSecret);
+        res.status(200).json({
+          access_token: result.accessToken,
+          token_type: Authorization.tokenType,
+          expires_in: Authorization.expiresIn
+        });
+      } catch (error) {
+        res.status(401).json({ error: error.message });
+      }
       return;
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -28,12 +32,16 @@ const authorizationModelHandler = (Authorization: AuthorizationModel) => {
   router.post("/validation", async (req, res, next) => {
     try {
       const { accessToken } = req.body;
-      const app = await Authorization.validateAccessToken(accessToken);
-      if (app.length > 0) {
-        res.status(200).json({ message: "Authorized", success: true });
-        return;
+      try {
+        const validateResult = await Authorization.validateAccessToken(accessToken);
+        if (validateResult) {
+          res.status(200).json({ message: "Authenticated", success: true });
+          return;
+        }
+        res.status(401).json({ error: "Access Token expired", success: false });
+      } catch (error) {
+        res.status(400).json({ error: error.message, success: false });
       }
-      res.status(403).json({ error: "Access token not found. Unauthorized", success: false });
       return;
     } catch (error) {
       console.error("Error validating access token:", error);
@@ -44,15 +52,23 @@ const authorizationModelHandler = (Authorization: AuthorizationModel) => {
   router.post("/registration", async (req, res, next) => {
     try {
       const { contactEmail } = req.body;
+      if (!contactEmail) {
+        res.status(400).json({ error: "Contact email is empty" });
+        return;
+      }
       const appData = await Authorization.getContactEmail(contactEmail);
       if (appData.length > 0) {
         res.status(403).json({ error: "Contact email already registered!" });
         return;
       }
-      const clientId = uuidv5(contactEmail, contactEmail);
-      const clientSecretGen = uuidv5(clientId, clientId);
+      const clientId = uuidv4({}, Buffer.from(contactEmail));
+      const clientSecretGen = uuidv4({ random: [0x2] }, Buffer.from(clientId));
       const clientSecret = createHash("sha256").update(clientSecretGen).digest().toString("hex");
-      const result = await Authorization.storeNewApplication({ clientId, clientSecret, contactEmail });
+      const result = await Authorization.storeNewApplication({
+        clientId: clientId.toString("hex"),
+        clientSecret,
+        contactEmail
+      });
       return res.status(200).json(result);
 
       // TODO: generate new access token. Can use JWT

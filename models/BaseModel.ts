@@ -10,7 +10,14 @@ abstract class BaseModel {
 
   protected createModel = () => {
     if (!this.model) {
-      this.model = model(this.collectionName, this.schema, { initialize: true });
+      this.model = model(this.collectionName, this.schema, { initialize: true, tableName: this.collectionName });
+      this.model
+        .table()
+        .initialize()
+        .then(
+          () => {},
+          () => {}
+        );
     }
   };
 }

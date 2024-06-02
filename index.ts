@@ -10,7 +10,7 @@ const host = "0.0.0.0";
 (async () => {
   const employeeModel = new EmpployeeModel();
   const authorizationModel = new AuthorizationModel();
-  const middleware = config.NODE_ENV === "development" ? undefined : new Middleware();
+  const middleware = new Middleware();
   const server = initServer(
     {
       employeeModel,
