@@ -43,20 +43,28 @@ const employeeRouterHandler = (Users: EmployeeModel) => {
       return res.status(400).send("No file uploaded.");
     }
 
+    const users = await Users.getEmployeeById(+id);
+    if (users.length === 0) {
+      res.status(404).json({ error: "Employee not found" });
+      return;
+    }
+
     try {
       const ifBucketExist = await Users.checkIfBucketExists();
       if (!ifBucketExist) {
         const err = await Users.createBucket();
         if (err) {
-          return res.status(500).json({ error: err });
+          res.status(500).json({ error: err });
+          return;
         }
       }
       const err = await Users.uploadEmployeeImage(id, req.file);
       if (!err) {
         res.status(200).json();
-      } else {
-        res.status(400).json({ error: err });
+        return;
       }
+      res.status(400).json({ error: err });
+      return;
     } catch (error) {
       console.error("Error fetching user data:", error);
       res.status(500).json({ error: "Internal server error" });
@@ -65,10 +73,16 @@ const employeeRouterHandler = (Users: EmployeeModel) => {
 
   router.get("/:id/photo/:name", async (req, res, next) => {
     const { id, name } = req.params;
+    const users = await Users.getEmployeeById(+id);
+    if (users.length === 0) {
+      res.status(404).json({ error: "Employee not found" });
+      return;
+    }
     try {
       const imageStream = await Users.downloadEmployeeImage(id, name);
       res.setHeader("Content-Disposition", `attachment; filename=${id}-${name}`);
       imageStream.pipe(res);
+      return;
     } catch (error) {
       console.error("Error fetching user data:", error);
       res.status(500).json({ error: "Internal server error" });
@@ -98,6 +112,7 @@ const employeeRouterHandler = (Users: EmployeeModel) => {
       });
 
       res.status(200).json(newEmployee);
+      return;
     } catch (error) {
       console.error("Error updating user:", error);
       res.status(500).json({ error: "Internal server error" });

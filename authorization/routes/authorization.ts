@@ -69,7 +69,13 @@ const authorizationModelHandler = (Authorization: AuthorizationModel) => {
         clientSecret,
         contactEmail
       });
-      return res.status(200).json(result);
+      return res.status(200).json({
+        client_id: result.clientId,
+        client_secret: result.clientSecret,
+        access_token: result.accessToken,
+        token_type: Authorization.tokenType,
+        expires_in: Authorization.expiresIn
+      });
 
       // TODO: generate new access token. Can use JWT
     } catch (error) {
